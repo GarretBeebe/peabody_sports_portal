@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Email Templates — Peabody Sports{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Email Templates</h2>
+  <a href="{{ url_for('admin.templates_new') }}" class="btn btn-primary btn-sm">+ Add Template</a>
+</div>
+
+<p class="text-muted small mb-3">
+  Resolution order: <strong>event</strong> overrides <strong>sport</strong> overrides <strong>global</strong>.
+  Available variables: <code>{event_name}</code> <code>{event_description}</code> <code>{deadline}</code>
+  <code>{sport_name}</code> <code>{league}</code> <code>{league_website}</code>
+  <code>{family_last_name}</code> <code>{days_before}</code>
+</p>
+
+{% if templates %}
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead class="table-dark">
+      <tr><th>Scope</th><th>Target</th><th>Subject</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for id, scope, subject, sport_name, event_name in templates %}
+      <tr>
+        <td><span class="badge bg-{{ 'primary' if scope == 'global' else 'info text-dark' if scope == 'sport' else 'warning text-dark' }}">{{ scope }}</span></td>
+        <td class="small">
+          {% if scope == 'sport' %}{{ sport_name }}
+          {% elif scope == 'event' %}{{ sport_name }} — {{ event_name }}
+          {% else %}All{% endif %}
+        </td>
+        <td>{{ subject }}</td>
+        <td class="text-end">
+          <a href="{{ url_for('admin.templates_edit', id=id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+          <form method="post" action="{{ url_for('admin.templates_delete', id=id) }}" class="d-inline"
+                onsubmit="return confirm('Delete this template?')">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-outline-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-muted">No templates yet. <a href="{{ url_for('admin.templates_new') }}">Add a global template</a> to get started.</p>
+{% endif %}
+{% endblock %}

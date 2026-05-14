@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — Peabody Sports{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">{{ title }}</h2>
+<div class="col-md-5">
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="mb-3">
+      {{ form.last_name.label(class="form-label") }}
+      {{ form.last_name(class="form-control" + (" is-invalid" if form.last_name.errors else "")) }}
+      {% for e in form.last_name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.email.label(class="form-label") }}
+      {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+      {% for e in form.email.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{ url_for('admin.families_list') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+  </form>
+</div>
+{% endblock %}

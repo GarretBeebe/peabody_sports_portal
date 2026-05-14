@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — Peabody Sports{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">{{ title }}</h2>
+<div class="col-md-7">
+  <div class="alert alert-info small mb-4">
+    <strong>Available variables:</strong>
+    <code>{event_name}</code> <code>{event_description}</code> <code>{deadline}</code>
+    <code>{sport_name}</code> <code>{league}</code> <code>{league_website}</code>
+    <code>{family_last_name}</code> <code>{days_before}</code>
+  </div>
+
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="mb-3">
+      {{ form.scope.label(class="form-label") }}
+      {{ form.scope(class="form-select" + (" is-invalid" if form.scope.errors else "")) }}
+      <div class="form-text">Global = fallback for all events. Sport = overrides global for one sport. Event = overrides everything for one deadline.</div>
+      {% for e in form.scope.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.sport_id.label(class="form-label") }}
+      {{ form.sport_id(class="form-select" + (" is-invalid" if form.sport_id.errors else "")) }}
+      <div class="form-text">Required for sport and event scopes.</div>
+      {% for e in form.sport_id.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.sport_date_id.label(class="form-label") }}
+      {{ form.sport_date_id(class="form-select" + (" is-invalid" if form.sport_date_id.errors else "")) }}
+      <div class="form-text">Required for event scope only.</div>
+      {% for e in form.sport_date_id.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.subject.label(class="form-label") }}
+      {{ form.subject(class="form-control" + (" is-invalid" if form.subject.errors else "")) }}
+      {% for e in form.subject.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.body_text.label(class="form-label") }}
+      {{ form.body_text(class="form-control font-monospace" + (" is-invalid" if form.body_text.errors else ""), rows=12) }}
+      {% for e in form.body_text.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{ url_for('admin.templates_list') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+  </form>
+</div>
+{% endblock %}

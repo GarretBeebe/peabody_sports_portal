@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard — Peabody Sports{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Admin Dashboard</h2>
+
+<div class="row g-3 mb-5">
+  <div class="col-sm-6 col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h1 class="display-4">{{ family_count }}</h1>
+        <p class="card-text text-muted">Families</p>
+        <a href="{{ url_for('admin.families_list') }}" class="btn btn-sm btn-outline-primary">Manage</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h1 class="display-4">{{ student_count }}</h1>
+        <p class="card-text text-muted">Students</p>
+        <a href="{{ url_for('admin.students_list') }}" class="btn btn-sm btn-outline-primary">Manage</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h1 class="display-4">{{ sport_count }}</h1>
+        <p class="card-text text-muted">Sports</p>
+        <a href="{{ url_for('admin.sports_list') }}" class="btn btn-sm btn-outline-primary">Manage</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h1 class="display-4">{{ upcoming_count }}</h1>
+        <p class="card-text text-muted">Upcoming Events</p>
+        <a href="{{ url_for('admin.dates_list') }}" class="btn btn-sm btn-outline-primary">Manage</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">Email Templates</div>
+      <div class="card-body">
+        <p class="card-text text-muted small">Manage global, per-sport, and per-event email templates.</p>
+        <a href="{{ url_for('admin.templates_list') }}" class="btn btn-outline-secondary btn-sm">Manage Templates</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">Reminder Intervals</div>
+      <div class="card-body">
+        <p class="card-text text-muted small">Set how many days before a deadline emails are sent.</p>
+        <a href="{{ url_for('admin.intervals_list') }}" class="btn btn-outline-secondary btn-sm">Manage Intervals</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">Notification Log</div>
+      <div class="card-body">
+        <p class="card-text text-muted small">View sent emails and delivery status.</p>
+        <a href="{{ url_for('admin.notification_log') }}" class="btn btn-outline-secondary btn-sm">View Log</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

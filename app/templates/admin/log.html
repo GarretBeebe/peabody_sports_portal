@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Notification Log — Peabody Sports{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Notification Log</h2>
+  <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">Dashboard</a>
+</div>
+
+{% if entries %}
+<div class="table-responsive">
+  <table class="table table-sm table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>Sent At</th>
+        <th>Recipient</th>
+        <th>Sport / Event</th>
+        <th>Days Before</th>
+        <th>Subject</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sent_at, email, subject, days_before, status, error_msg, sport_name, event_name in entries %}
+      <tr>
+        <td class="text-nowrap small">{{ sent_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        <td class="small">{{ email }}</td>
+        <td class="small">{{ sport_name }} — {{ event_name }}</td>
+        <td class="text-center">{{ days_before }}</td>
+        <td class="small">{{ subject }}</td>
+        <td>
+          {% if status == 'sent' %}
+            <span class="badge bg-success">sent</span>
+          {% else %}
+            <span class="badge bg-danger" title="{{ error_msg or '' }}">failed</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-muted">No notifications sent yet.</p>
+{% endif %}
+{% endblock %}

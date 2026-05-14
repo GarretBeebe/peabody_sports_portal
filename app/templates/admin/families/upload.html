@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Upload Families CSV — Peabody Sports{% endblock %}
+
+{% block content %}
+<h2 class="mb-2">Upload Families CSV</h2>
+<p class="text-muted mb-4">Existing families are updated by email (upsert). New families are added.</p>
+
+<div class="col-md-5">
+  <div class="alert alert-info small mb-4">
+    <strong>Required columns:</strong> <code>last_name</code>, <code>email</code>
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="mb-3">
+      <label class="form-label">CSV File</label>
+      <input type="file" name="file" accept=".csv" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Import</button>
+    <a href="{{ url_for('admin.families_list') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+  </form>
+</div>
+{% endblock %}

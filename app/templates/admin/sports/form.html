@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — Peabody Sports{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">{{ title }}</h2>
+<div class="col-md-5">
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="mb-3">
+      {{ form.name.label(class="form-label") }}
+      {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+      {% for e in form.name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.league.label(class="form-label") }}
+      {{ form.league(class="form-control" + (" is-invalid" if form.league.errors else "")) }}
+      {% for e in form.league.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.league_website.label(class="form-label") }}
+      {{ form.league_website(class="form-control" + (" is-invalid" if form.league_website.errors else ""), placeholder="https://...") }}
+      {% for e in form.league_website.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{ url_for('admin.sports_list') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+  </form>
+</div>
+{% endblock %}

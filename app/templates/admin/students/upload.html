@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Upload Students CSV — Peabody Sports{% endblock %}
+
+{% block content %}
+<h2 class="mb-2">Upload Students CSV</h2>
+<p class="text-muted mb-4">All rows must be valid. Families must already exist (matched by email).</p>
+
+<div class="col-md-5">
+  <div class="alert alert-info small mb-4">
+    <strong>Required columns:</strong>
+    <code>family_email</code>, <code>first_name</code>, <code>last_name</code>,
+    <code>grade</code> (0=K), <code>teacher</code>
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="mb-3">
+      <label class="form-label">CSV File</label>
+      <input type="file" name="file" accept=".csv" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Import</button>
+    <a href="{{ url_for('admin.students_list') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+  </form>
+</div>
+{% endblock %}

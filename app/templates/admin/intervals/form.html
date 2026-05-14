@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — Peabody Sports{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">{{ title }}</h2>
+<div class="col-md-4">
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="mb-3">
+      {{ form.days_before.label(class="form-label") }}
+      {{ form.days_before(class="form-control" + (" is-invalid" if form.days_before.errors else "")) }}
+      <div class="form-text">e.g. 7 sends reminders one week before each deadline.</div>
+      {% for e in form.days_before.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{ url_for('admin.intervals_list') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+  </form>
+</div>
+{% endblock %}

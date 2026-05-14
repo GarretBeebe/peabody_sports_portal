@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — Peabody Sports{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">{{ title }}</h2>
+<div class="col-md-5">
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="mb-3">
+      {{ form.sport_id.label(class="form-label") }}
+      {{ form.sport_id(class="form-select" + (" is-invalid" if form.sport_id.errors else "")) }}
+      {% for e in form.sport_id.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.event_name.label(class="form-label") }}
+      {{ form.event_name(class="form-control" + (" is-invalid" if form.event_name.errors else "")) }}
+      {% for e in form.event_name.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.deadline.label(class="form-label") }}
+      {{ form.deadline(class="form-control" + (" is-invalid" if form.deadline.errors else "")) }}
+      {% for e in form.deadline.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="mb-3">
+      {{ form.event_description.label(class="form-label") }}
+      {{ form.event_description(class="form-control" + (" is-invalid" if form.event_description.errors else ""), rows=3) }}
+      {% for e in form.event_description.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{{ url_for('admin.dates_list') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+  </form>
+</div>
+{% endblock %}

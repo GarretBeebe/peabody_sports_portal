@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Admin Login — Peabody Sports{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-4">
+    <h2 class="mb-4">Admin Login</h2>
+    <form method="post" novalidate>
+      {{ form.hidden_tag() }}
+
+      <div class="mb-3">
+        {{ form.username.label(class="form-label") }}
+        {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), autofocus=true) }}
+        {% for e in form.username.errors %}
+          <div class="invalid-feedback">{{ e }}</div>
+        {% endfor %}
+      </div>
+
+      <div class="mb-3">
+        {{ form.password.label(class="form-label") }}
+        {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
+        {% for e in form.password.errors %}
+          <div class="invalid-feedback">{{ e }}</div>
+        {% endfor %}
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Log in</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

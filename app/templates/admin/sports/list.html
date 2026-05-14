@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Sports — Peabody Sports{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Sports</h2>
+  <div>
+    <a href="{{ url_for('admin.sports_upload') }}" class="btn btn-outline-secondary btn-sm me-2">Upload CSV</a>
+    <a href="{{ url_for('admin.sports_new') }}" class="btn btn-primary btn-sm">+ Add Sport</a>
+  </div>
+</div>
+
+{% if sports %}
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead class="table-dark">
+      <tr><th>Name</th><th>League</th><th>Website</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for id, name, league, league_website in sports %}
+      <tr>
+        <td>{{ name }}</td>
+        <td>{{ league }}</td>
+        <td>
+          {% if league_website %}
+            <a href="{{ league_website }}" target="_blank" rel="noopener">{{ league_website }}</a>
+          {% endif %}
+        </td>
+        <td class="text-end">
+          <a href="{{ url_for('admin.sports_edit', id=id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+          <form method="post" action="{{ url_for('admin.sports_delete', id=id) }}" class="d-inline"
+                onsubmit="return confirm('Delete this sport and all its events?')">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-outline-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-muted">No sports yet. <a href="{{ url_for('admin.sports_new') }}">Add one</a> or <a href="{{ url_for('admin.sports_upload') }}">upload a CSV</a>.</p>
+{% endif %}
+{% endblock %}

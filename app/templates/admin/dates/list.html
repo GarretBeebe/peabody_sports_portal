@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Critical Sport Dates — Peabody Sports{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Critical Sport Dates</h2>
+  <div>
+    <a href="{{ url_for('admin.dates_upload') }}" class="btn btn-outline-secondary btn-sm me-2">Upload CSV</a>
+    <a href="{{ url_for('admin.dates_new') }}" class="btn btn-primary btn-sm">+ Add Event</a>
+  </div>
+</div>
+
+{% if dates %}
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead class="table-dark">
+      <tr><th>Deadline</th><th>Sport</th><th>Event</th><th>Description</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for id, sport_name, event_name, deadline, description in dates %}
+      <tr>
+        <td class="text-nowrap fw-semibold {% if deadline < today %}text-muted{% endif %}">
+          {{ deadline.strftime('%Y-%m-%d') }}
+          {% if deadline < today %}<span class="badge bg-secondary ms-1">past</span>{% endif %}
+        </td>
+        <td>{{ sport_name }}</td>
+        <td>{{ event_name }}</td>
+        <td class="small text-muted">{{ description or '' }}</td>
+        <td class="text-end">
+          <a href="{{ url_for('admin.dates_edit', id=id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+          <form method="post" action="{{ url_for('admin.dates_delete', id=id) }}" class="d-inline"
+                onsubmit="return confirm('Delete this event?')">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-outline-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-muted">No events yet. <a href="{{ url_for('admin.dates_new') }}">Add one</a> or <a href="{{ url_for('admin.dates_upload') }}">upload a CSV</a>.</p>
+{% endif %}
+{% endblock %}

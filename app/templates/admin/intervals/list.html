@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Reminder Intervals — Peabody Sports{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="mb-0">Reminder Intervals</h2>
+  <a href="{{ url_for('admin.intervals_new') }}" class="btn btn-primary btn-sm">+ Add Interval</a>
+</div>
+<p class="text-muted small mb-4">Emails are sent on each configured interval before a deadline. The default of 7 days is seeded automatically.</p>
+
+{% if intervals %}
+<div class="col-md-4">
+  <ul class="list-group">
+    {% for id, days_before in intervals %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <span><strong>{{ days_before }}</strong> day{{ 's' if days_before != 1 else '' }} before deadline</span>
+      <form method="post" action="{{ url_for('admin.intervals_delete', id=id) }}"
+            onsubmit="return confirm('Remove this interval?')">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-sm btn-outline-danger">Remove</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% else %}
+<p class="text-muted">No intervals configured. <a href="{{ url_for('admin.intervals_new') }}">Add one</a>.</p>
+{% endif %}
+{% endblock %}
