@@ -1,9 +1,13 @@
+from collections.abc import Iterator
 from contextlib import contextmanager
+
+import psycopg2.extensions
+
 import app.extensions as ext
 
 
 @contextmanager
-def get_db():
+def get_db() -> Iterator[psycopg2.extensions.connection]:
     conn = ext.db_pool.getconn()
     try:
         yield conn

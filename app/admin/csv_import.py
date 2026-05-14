@@ -4,17 +4,19 @@ import io
 import re
 from datetime import date
 
+from werkzeug.datastructures import FileStorage
+
 from app.db import get_db
 
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
-def _reader(file_storage):
+def _reader(file_storage: FileStorage) -> csv.DictReader:
     text = io.StringIO(file_storage.read().decode("utf-8-sig"))
     return csv.DictReader(text)
 
 
-def _require_cols(reader, required, entity):
+def _require_cols(reader: csv.DictReader, required: list[str]) -> list[str]:
     missing = [c for c in required if c not in reader.fieldnames]
     if missing:
         return [f"Missing required columns: {', '.join(missing)}"]
@@ -23,9 +25,9 @@ def _require_cols(reader, required, entity):
 
 # ── Families ──────────────────────────────────────────────────────────────────
 
-def import_families(file_storage):
+def import_families(file_storage: FileStorage) -> list[str]:
     reader = _reader(file_storage)
-    errors = _require_cols(reader, ["last_name", "email"], "family")
+    errors = _require_cols(reader, ["last_name", "email"])
     if errors:
         return errors
 
@@ -63,10 +65,10 @@ def import_families(file_storage):
 
 # ── Students ──────────────────────────────────────────────────────────────────
 
-def import_students(file_storage):
+def import_students(file_storage: FileStorage) -> list[str]:
     reader = _reader(file_storage)
     errors = _require_cols(
-        reader, ["family_email", "first_name", "last_name", "grade", "teacher"], "student"
+        reader, ["family_email", "first_name", "last_name", "grade", "teacher"]
     )
     if errors:
         return errors
@@ -122,9 +124,9 @@ def import_students(file_storage):
 
 # ── Sports ────────────────────────────────────────────────────────────────────
 
-def import_sports(file_storage):
+def import_sports(file_storage: FileStorage) -> list[str]:
     reader = _reader(file_storage)
-    errors = _require_cols(reader, ["name", "league"], "sport")
+    errors = _require_cols(reader, ["name", "league"])
     if errors:
         return errors
 
@@ -164,9 +166,9 @@ def import_sports(file_storage):
 
 # ── Critical Sport Dates ───────────────────────────────────────────────────────
 
-def import_dates(file_storage):
+def import_dates(file_storage: FileStorage) -> list[str]:
     reader = _reader(file_storage)
-    errors = _require_cols(reader, ["sport_name", "event_name", "deadline"], "critical_sport_dates")
+    errors = _require_cols(reader, ["sport_name", "event_name", "deadline"])
     if errors:
         return errors
 

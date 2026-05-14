@@ -11,18 +11,18 @@ auth_bp = Blueprint("auth", __name__)
 
 
 class AdminUser(UserMixin):
-    def __init__(self, id, username, email, is_active):
+    def __init__(self, id: int, username: str, email: str, is_active: bool) -> None:
         self.id = id
         self.username = username
         self.email = email
         self._is_active = is_active
 
     @property
-    def is_active(self):
+    def is_active(self) -> bool:
         return self._is_active
 
 
-def load_user(user_id):
+def load_user(user_id: str) -> "AdminUser | None":
     with get_db() as conn:
         with conn.cursor() as cur:
             cur.execute(

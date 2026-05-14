@@ -1,4 +1,5 @@
 import logging
+import string
 from datetime import date, timedelta
 
 from app.db import get_db
@@ -161,7 +162,7 @@ def _send_with_dedup(
             log.error("Failed to send to %s: %s", email, exc)
 
 
-def substitute_vars(template: str, vars_: dict) -> str:
+def substitute_vars(template: str, vars_: dict[str, str]) -> str:
     unknown = {
         k for k in _extract_vars(template) if k not in _ALLOWED_VARS
     }
@@ -170,8 +171,7 @@ def substitute_vars(template: str, vars_: dict) -> str:
     return template.format_map(vars_)
 
 
-def _extract_vars(text: str) -> set:
-    import string
+def _extract_vars(text: str) -> set[str]:
     return {
         field_name
         for _, field_name, _, _ in string.Formatter().parse(text)

@@ -62,10 +62,7 @@ def families_new():
             flash("Family added.", "success")
             return redirect(url_for("admin.families_list"))
         except Exception as exc:
-            if "unique" in str(exc).lower():
-                flash("A family with that email already exists.", "danger")
-            else:
-                flash(f"Error: {exc}", "danger")
+            _flash_db_error(exc, "A family with that email already exists.")
     return render_template("admin/families/form.html", form=form, title="Add Family")
 
 
@@ -93,10 +90,7 @@ def families_edit(id):
             flash("Family updated.", "success")
             return redirect(url_for("admin.families_list"))
         except Exception as exc:
-            if "unique" in str(exc).lower():
-                flash("A family with that email already exists.", "danger")
-            else:
-                flash(f"Error: {exc}", "danger")
+            _flash_db_error(exc, "A family with that email already exists.")
     return render_template("admin/families/form.html", form=form, title="Edit Family")
 
 
@@ -114,9 +108,8 @@ def families_delete(id):
 @login_required
 def families_upload():
     if request.method == "POST":
-        f = request.files.get("file")
-        if not f or not f.filename.endswith(".csv"):
-            flash("Please upload a CSV file.", "danger")
+        f = _get_csv_upload()
+        if f is None:
             return redirect(request.url)
         from app.admin.csv_import import import_families
         errors = import_families(f)
@@ -232,9 +225,8 @@ def students_delete(id):
 @login_required
 def students_upload():
     if request.method == "POST":
-        f = request.files.get("file")
-        if not f or not f.filename.endswith(".csv"):
-            flash("Please upload a CSV file.", "danger")
+        f = _get_csv_upload()
+        if f is None:
             return redirect(request.url)
         from app.admin.csv_import import import_students
         errors = import_students(f)
@@ -277,10 +269,7 @@ def sports_new():
             flash("Sport added.", "success")
             return redirect(url_for("admin.sports_list"))
         except Exception as exc:
-            if "unique" in str(exc).lower():
-                flash("A sport with that name already exists.", "danger")
-            else:
-                flash(f"Error: {exc}", "danger")
+            _flash_db_error(exc, "A sport with that name already exists.")
     return render_template("admin/sports/form.html", form=form, title="Add Sport")
 
 
@@ -316,10 +305,7 @@ def sports_edit(id):
             flash("Sport updated.", "success")
             return redirect(url_for("admin.sports_list"))
         except Exception as exc:
-            if "unique" in str(exc).lower():
-                flash("A sport with that name already exists.", "danger")
-            else:
-                flash(f"Error: {exc}", "danger")
+            _flash_db_error(exc, "A sport with that name already exists.")
     return render_template("admin/sports/form.html", form=form, title="Edit Sport")
 
 
@@ -337,9 +323,8 @@ def sports_delete(id):
 @login_required
 def sports_upload():
     if request.method == "POST":
-        f = request.files.get("file")
-        if not f or not f.filename.endswith(".csv"):
-            flash("Please upload a CSV file.", "danger")
+        f = _get_csv_upload()
+        if f is None:
             return redirect(request.url)
         from app.admin.csv_import import import_sports
         errors = import_sports(f)
@@ -452,9 +437,8 @@ def dates_delete(id):
 @login_required
 def dates_upload():
     if request.method == "POST":
-        f = request.files.get("file")
-        if not f or not f.filename.endswith(".csv"):
-            flash("Please upload a CSV file.", "danger")
+        f = _get_csv_upload()
+        if f is None:
             return redirect(request.url)
         from app.admin.csv_import import import_dates
         errors = import_dates(f)
@@ -511,10 +495,7 @@ def templates_new():
             flash("Template saved.", "success")
             return redirect(url_for("admin.templates_list"))
         except Exception as exc:
-            if "unique" in str(exc).lower():
-                flash("A template for that scope/target already exists.", "danger")
-            else:
-                flash(f"Error: {exc}", "danger")
+            _flash_db_error(exc, "A template for that scope/target already exists.")
     return render_template("admin/templates/form.html", form=form, title="Add Template")
 
 
@@ -561,10 +542,7 @@ def templates_edit(id):
             flash("Template updated.", "success")
             return redirect(url_for("admin.templates_list"))
         except Exception as exc:
-            if "unique" in str(exc).lower():
-                flash("A template for that scope/target already exists.", "danger")
-            else:
-                flash(f"Error: {exc}", "danger")
+            _flash_db_error(exc, "A template for that scope/target already exists.")
     return render_template("admin/templates/form.html", form=form, title="Edit Template")
 
 
@@ -606,10 +584,7 @@ def intervals_new():
             flash(f"{form.days_before.data}-day reminder added.", "success")
             return redirect(url_for("admin.intervals_list"))
         except Exception as exc:
-            if "unique" in str(exc).lower():
-                flash("That interval already exists.", "danger")
-            else:
-                flash(f"Error: {exc}", "danger")
+            _flash_db_error(exc, "That interval already exists.")
     return render_template("admin/intervals/form.html", form=form, title="Add Reminder Interval")
 
 
@@ -647,6 +622,21 @@ def notification_log():
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
+def _flash_db_error(exc: Exception, unique_msg: str) -> None:
+    if "unique" in str(exc).lower():
+        flash(unique_msg, "danger")
+    else:
+        flash(f"Unexpected error: {exc}", "danger")
+
+
+def _get_csv_upload():
+    f = request.files.get("file")
+    if not f or not f.filename.endswith(".csv"):
+        flash("Please upload a CSV file.", "danger")
+        return None
+    return f
+
 
 def _populate_family_choices(form):
     with get_db() as conn:
