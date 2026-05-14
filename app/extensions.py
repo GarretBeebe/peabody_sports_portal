@@ -11,7 +11,7 @@ login_manager.login_message_category = "warning"
 
 bcrypt = Bcrypt()
 csrf = CSRFProtect()
-limiter = Limiter(key_func=get_remote_address, default_limits=[])
+limiter = Limiter(key_func=get_remote_address, default_limits=[], storage_uri="memory://")
 
 # Assigned in create_app() after config is loaded
 db_pool = None
