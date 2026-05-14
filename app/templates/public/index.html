@@ -24,8 +24,8 @@
           <td>{{ event_name }}</td>
           <td class="text-muted small">{{ event_description or '' }}</td>
           <td>
-            {% if league_website %}
-              <a href="{{ league_website }}" target="_blank" rel="noopener">League Site</a>
+            {% if league_website and league_website.startswith(('http://', 'https://')) %}
+              <a href="{{ league_website }}" target="_blank" rel="noopener noreferrer">League Site</a>
             {% endif %}
           </td>
         </tr>

@@ -22,8 +22,8 @@
         <td>{{ name }}</td>
         <td>{{ league }}</td>
         <td>
-          {% if league_website %}
-            <a href="{{ league_website }}" target="_blank" rel="noopener">{{ league_website }}</a>
+          {% if league_website and league_website.startswith(('http://', 'https://')) %}
+            <a href="{{ league_website }}" target="_blank" rel="noopener noreferrer">{{ league_website }}</a>
           {% endif %}
         </td>
         <td class="text-end">

@@ -3,16 +3,22 @@ from datetime import timedelta
 
 
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-key-change-me")
+    # Raises KeyError on startup if not set — no insecure fallback
+    SECRET_KEY = os.environ["SECRET_KEY"]
     DATABASE_URL = os.environ["DATABASE_URL"]
 
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SAMESITE = "Strict"
+    # Only transmit session cookie over HTTPS; set FLASK_ENV=development to disable
+    SESSION_COOKIE_SECURE = os.environ.get("FLASK_ENV", "production") != "development"
     WTF_CSRF_ENABLED = True
 
     PERMANENT_SESSION_LIFETIME = timedelta(
         hours=int(os.environ.get("PERMANENT_SESSION_LIFETIME_HOURS", 8))
     )
+
+    # Reject uploads larger than 16 MB before they reach route handlers
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
 
     SMTP_HOST = os.environ.get("SMTP_HOST", "")
     SMTP_PORT = int(os.environ.get("SMTP_PORT", 587))

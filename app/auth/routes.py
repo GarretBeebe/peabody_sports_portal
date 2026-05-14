@@ -1,11 +1,14 @@
-from urllib.parse import urlparse
+import logging
+from urllib.parse import urljoin, urlparse
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import UserMixin, current_user, login_required, login_user, logout_user
 
 from app.auth.forms import LoginForm
 from app.db import get_db
-from app.extensions import bcrypt
+from app.extensions import bcrypt, limiter
+
+log = logging.getLogger(__name__)
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -35,7 +38,17 @@ def load_user(user_id: str) -> "AdminUser | None":
     return AdminUser(*row)
 
 
+def _is_safe_redirect(url: str) -> bool:
+    """Return True only if url resolves to the same host as the current request."""
+    if not url:
+        return False
+    ref = urlparse(request.host_url)
+    test = urlparse(urljoin(request.host_url, url))
+    return test.scheme in ("http", "https") and ref.netloc == test.netloc
+
+
 @auth_bp.route("/admin/login", methods=["GET", "POST"])
+@limiter.limit("10 per minute")
 def login():
     if current_user.is_authenticated:
         return redirect(url_for("admin.dashboard"))
@@ -61,12 +74,11 @@ def login():
                         "UPDATE admin_users SET last_login_at = NOW() WHERE id = %s",
                         (user.id,),
                     )
+            log.info("Successful login: user=%s ip=%s", user.username, request.remote_addr)
             next_url = request.args.get("next", "")
-            parsed = urlparse(next_url)
-            if parsed.netloc or parsed.scheme:
-                next_url = ""
-            return redirect(next_url or url_for("admin.dashboard"))
+            return redirect(next_url if _is_safe_redirect(next_url) else url_for("admin.dashboard"))
 
+        log.warning("Failed login attempt: username=%s ip=%s", form.username.data, request.remote_addr)
         flash("Invalid username or password.", "danger")
 
     return render_template("admin/login.html", form=form)
@@ -75,5 +87,6 @@ def login():
 @auth_bp.route("/admin/logout")
 @login_required
 def logout():
+    log.info("Logout: user=%s ip=%s", current_user.username, request.remote_addr)
     logout_user()
     return redirect(url_for("auth.login"))

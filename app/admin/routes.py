@@ -1,7 +1,10 @@
+import logging
 from datetime import date
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required
+
+log = logging.getLogger(__name__)
 
 from app.db import get_db
 
@@ -627,7 +630,8 @@ def _flash_db_error(exc: Exception, unique_msg: str) -> None:
     if "unique" in str(exc).lower():
         flash(unique_msg, "danger")
     else:
-        flash(f"Unexpected error: {exc}", "danger")
+        log.error("Unexpected database error: %s", exc)
+        flash("An unexpected error occurred. Please try again.", "danger")
 
 
 def _get_csv_upload():
